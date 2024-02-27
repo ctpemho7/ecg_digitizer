@@ -16,6 +16,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --upgrade pip -r /requirements.txt
 
 ADD ./src /src
+ADD ./media /media
+ADD ./static /static
+
 WORKDIR /src
 
 USER root

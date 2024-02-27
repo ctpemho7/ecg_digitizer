@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from ecgs.models import EcgModel
+
+@admin.register(EcgModel)
+class EcgModelAdmin(admin.ModelAdmin):
+    list_display = ("status", "name", "description", "date", "path", "owner")

@@ -137,4 +137,4 @@ dmypy.json
 # Django
 /media
 /portfolio/staticfiles
-/static
+/media

@@ -1,5 +1,5 @@
 services:
-    server:
+    user_backend:
         build: .
         image: user_backend
         env_file:
