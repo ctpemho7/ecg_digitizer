@@ -7,7 +7,7 @@ class UserModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserModel
-        fields = ['username', 'first_name', 'last_name', 'email', 'status', 'password']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'status', 'password']
 
 
 class PatientToDocktorSerializer(serializers.ModelSerializer):
