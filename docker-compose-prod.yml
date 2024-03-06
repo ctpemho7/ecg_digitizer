@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+    user_backend:
+        build: user_backend
+        image: user_backend
+        env_file:
+            - ./user_backend/.env
+        volumes:
+            - ./user_backend/src:/src
+        command: python manage.py runserver 0.0.0.0:8000
+        ports:
+            - "8000:8000"
+        links:
+            - db
+        depends_on:
+            - db
+        networks:
+            - ecg_network
+
+    yolo-detector:
+        build: detector
+        container_name: yolo-detector
+        command: uvicorn main:app --reload --host 0.0.0.0 --port=8010
+        ports:
+            - "8010:8010"
+        volumes:
+            - ./detector/src:/src
+            - ./detector/media:/media
+        env_file:
+            - ./detector/src/.env
+        networks:
+            - ecg_network
+
+    db:
+        image: postgres:14-alpine
+        environment:
+            - POSTGRES_DB=${DATABASE_NAME}
+            - POSTGRES_USER=${DATABASE_USER}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+        ports:
+            - "5432:5432"
+        expose:
+            - 5432
+        volumes:
+            - postgres_db:/var/lib/postgresql/data
+        networks:
+            - ecg_network
+
+volumes:
+  postgres_db:
+    name: postgres_db
+
+networks:
+    ecg_network:
+        driver: bridge
