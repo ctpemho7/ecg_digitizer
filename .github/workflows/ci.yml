@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, workflow ]
 
 
 jobs:
@@ -24,5 +24,4 @@ jobs:
 
     - name: Run tests
       run: |
-        cd src
         python user_backend/src/manage.py test
