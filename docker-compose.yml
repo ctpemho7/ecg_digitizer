@@ -13,10 +13,9 @@ services:
         command: python manage.py runserver 0.0.0.0:8000
         ports:
             - "8000:8000"
-        links:
-            - db
         depends_on:
-            - db
+            db:
+                condition: service_healthy
         networks:
             - ecg_network
 
@@ -46,6 +45,11 @@ services:
             - 5432
         volumes:
             - postgres_db:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
         networks:
             - ecg_network
 
