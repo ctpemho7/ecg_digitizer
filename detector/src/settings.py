@@ -1,3 +1,5 @@
+import os
+
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 
@@ -29,7 +31,7 @@ class Settings(BaseSettings):
     #: базовый адрес приложения
     base_url: str = Field(default="http://0.0.0.0:8010")
     #: ключ для roboflow
-    roboflow_api_key: str = Field(default="secret")
+    roboflow_api_key: str = Field(default=os.getenv("ROBOFLOW_API_KEY"))
 
     class Config:
         env_file = ".env"
