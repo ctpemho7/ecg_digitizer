@@ -26,4 +26,4 @@ jobs:
 
     - name: Run tests
       run: |
-        python src/manage.py test
+        python user_backend/src/manage.py test
