@@ -1,12 +1,15 @@
+version: "3.9"
+
 services:
     user_backend:
-        build: .
+        build: user_backend
         image: user_backend
         env_file:
-            - .env
+            - ./user_backend/.env
         volumes:
-            - ./src:/src
-        working_dir: /src/
+            - ./user_backend/src:/src
+            - ./user_backend/media:/media
+            - ./user_backend/static:/static
         command: python manage.py runserver 0.0.0.0:8000
         ports:
             - "8000:8000"
@@ -14,6 +17,20 @@ services:
             - db
         depends_on:
             - db
+        networks:
+            - ecg_network
+
+    yolo-detector:
+        build: detector
+        container_name: yolo-detector
+        command: uvicorn main:app --reload --host 0.0.0.0 --port=8010
+        ports:
+            - "8010:8010"
+        volumes:
+            - ./detector/src:/src
+            - ./detector/media:/media
+        env_file:
+            - ./detector/src/.env
         networks:
             - ecg_network
 
