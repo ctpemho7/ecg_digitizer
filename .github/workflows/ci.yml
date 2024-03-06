@@ -19,7 +19,7 @@ jobs:
         
     - name: Build and up container
       run: |
-        docker-compose -f lab_work_5/src/Docker-compose.yml up -d
+        docker-compose up -d
       env:
         ROBOFLOW_API_KEY: ${{ secrets.ROBOFLOW_API_KEY }}
 
