@@ -25,4 +25,4 @@ jobs:
 
     - name: Run tests
       run: |
-        docker-compose exec -T user_backend python manage.py test ecgs
+        docker-compose exec -T user_backend python manage.py test
