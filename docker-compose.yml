@@ -16,13 +16,17 @@ services:
         depends_on:
             db:
                 condition: service_healthy
+            minio:
+                condition: service_started
+            createbucket:
+                condition: service_started
+
         restart: always
         networks:
             - ecg_network
 
     yolo-detector:
         build: detector
-        container_name: yolo-detector
         command: uvicorn main:app --reload --host 0.0.0.0 --port=8010
         ports:
             - "8010:8010"
@@ -33,6 +37,7 @@ services:
             - ./detector/src/.env
         networks:
             - ecg_network
+
 
     db:
         image: postgres:14-alpine
@@ -54,9 +59,39 @@ services:
         networks:
             - ecg_network
 
+
+    minio:
+        image: minio/minio:latest
+        ports:
+          - "9000:9000"
+          - "9001:9001"
+        volumes:
+          - minio_data:/data
+        environment:
+          - "MINIO_ROOT_USER=user"
+          - "MINIO_ROOT_PASSWORD=password"
+        command: server /data --console-address :9001
+        networks:
+            - ecg_network
+
+    createbucket:
+        image: minio/mc:latest
+        depends_on:
+          - minio
+        entrypoint: >
+          /bin/sh -c "
+          /usr/bin/mc config host add --api s3v4 s3 http://minio:9000 user password;
+          /usr/bin/mc mb s3/static/;
+          /usr/bin/mc policy set none  s3/static;
+          "
+        networks:
+            - ecg_network
+
 volumes:
   postgres_db:
     name: postgres_db
+  minio_data:
+    name: minio_data
 
 networks:
     ecg_network:

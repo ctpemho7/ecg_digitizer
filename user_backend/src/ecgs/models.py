@@ -31,4 +31,4 @@ class EcgModel(models.Model):
 
 class EcgImage(models.Model):
     ecg = models.ForeignKey(EcgModel, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField()
+    image = models.ImageField(upload_to="images")
