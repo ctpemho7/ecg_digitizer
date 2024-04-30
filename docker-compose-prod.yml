@@ -8,15 +8,13 @@ services:
             - ./user_backend/.env
         volumes:
             - ./user_backend/src:/src
-            - ./user_backend/media:/media
-            - ./user_backend/static:/static
         command: python manage.py runserver 0.0.0.0:8000
         ports:
             - "8000:8000"
+        links:
+            - db
         depends_on:
-            db:
-                condition: service_healthy
-        restart: always
+            - db
         networks:
             - ecg_network
 
@@ -37,20 +35,15 @@ services:
     db:
         image: postgres:14-alpine
         environment:
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
-            POSTGRES_USER: ${POSTGRES_USER:-ecg_user}
-            POSTGRES_DB: ${POSTGRES_DB:-ecg_db}
+            - POSTGRES_DB=${DATABASE_NAME}
+            - POSTGRES_USER=${DATABASE_USER}
+            - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
         ports:
             - "5432:5432"
         expose:
             - 5432
         volumes:
             - postgres_db:/var/lib/postgresql/data
-        healthcheck:
-            test: [ "CMD-SHELL", "sh -c 'pg_isready -U ecg_user -d ecg_db'" ]
-            interval: 10s
-            timeout: 5s
-            retries: 5
         networks:
             - ecg_network
 

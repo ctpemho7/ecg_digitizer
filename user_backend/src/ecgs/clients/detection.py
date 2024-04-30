@@ -13,7 +13,7 @@ class DetectionClient:
         return "http://yolo-detector:8010/predict"
 
     def _request(self, endpoint: str) -> Optional[dict]:
-        response = httpx.get(endpoint)
+        response = httpx.get(endpoint, timeout=10.0)
         if response.status_code == HTTPStatus.OK:
             return response.json()
 
