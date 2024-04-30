@@ -38,6 +38,13 @@ services:
         networks:
             - ecg_network
 
+    label-studio:
+        image: heartexlabs/label-studio:latest
+        ports:
+            - "8080:8080"
+        volumes:
+            - label_sudio_data:/label-studio/data
+
 
     db:
         image: postgres:14-alpine
@@ -92,6 +99,8 @@ volumes:
     name: postgres_db
   minio_data:
     name: minio_data
+  label_sudio_data:
+    name: label_sudio_data
 
 networks:
     ecg_network:
