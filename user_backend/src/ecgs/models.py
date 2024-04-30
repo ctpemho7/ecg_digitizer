@@ -18,8 +18,12 @@ class EcgModel(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField()
     date = models.DateField()
-    path = models.FileField(null=True, blank=True)
+    amplitude = models.IntegerField()
+    write_speed = models.IntegerField()
+    header_path = models.FileField(upload_to="digitized", null=True, blank=True)
+    signal_path = models.FileField(upload_to="digitized", null=True, blank=True)
     owner = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    algorithm = models.CharField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.name} от {self.date} {self.owner.last_name}"

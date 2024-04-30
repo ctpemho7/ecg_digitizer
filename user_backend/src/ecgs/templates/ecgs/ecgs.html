@@ -1,0 +1,93 @@
+{% extends 'ecgs/base.html' %}
+{% load static %}
+
+{% block css %}
+    <link href="{% static 'vendor/css/products.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-lg-3">
+
+                <h1 class="my-4">Список ЭКГ</h1>
+                <a type="button" class="btn btn-outline-success"
+                   href="{ url 'ecg:basket_add' ecg.id %}">
+                    Добавить ЭКГ
+                </a>
+
+            </div>
+
+            <div class="col-lg-9">
+
+                <div class="row">
+                    {% for ecg in page_obj %}
+                        <div class="col-lg-4 col-md-6 mb-4">
+                            <div class="card h-100">
+                                <a href="#">
+                                    <img class="card-img-top"
+                                         src="{{ ecg.image.url }}"
+                                         alt="">
+                                </a>
+                                <div class="card-body">
+                                    <h4 class="card-title">
+                                        <a href="#">{{ ecg.name }}</a>
+                                    </h4>
+                                    <p class="card-text">{{ ecg.description }}</p>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <a type="button" class="btn btn-outline-success"
+                                       href="{ url 'ecg:basket_add' ecg.id %}">
+                                        Отправить в корзину
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+                
+            {% if is_paginated %}
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item {% if not page_obj.has_previous %} disabled {% endif %}">
+                            <a class="page-link"
+                               href="{% if page_obj.has_previous %} {% url 'ecgs:paginator' page_obj.previous_page_number %} {% else %} # {% endif %}"
+                               tabindex="-1" aria-disabled="true">
+                                Предыдущая
+                            </a>
+                        </li>
+                        {% for page in paginator.page_range %}
+                            <li class="page-item">
+                                <a class="page-link" href="{% url 'ecgs:paginator' page %}">
+                                    {{ page }}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    
+                        <li class="page-item" {% if not page_obj.has_next %} disabled {% endif %}>
+                            <a class="page-link"
+                               href="{% if page_obj.has_next %} {% url 'ecgs:paginator' page_obj.next_page_number %} {% else %} # {% endif %}">
+                                Следующая
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <footer class="py-5 bg-dark">
+        <div class="container">
+            <p class="m-0 text-center text-white">ECG Digitizer 2024</p>
+        </div>
+    </footer>
+
+{% endblock %}

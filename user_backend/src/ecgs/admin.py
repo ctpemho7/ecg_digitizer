@@ -10,5 +10,5 @@ class ImageAdmin(admin.TabularInline):
 
 @admin.register(EcgModel)
 class EcgModelAdmin(admin.ModelAdmin):
-    list_display = ("status", "name", "description", "date", "path", "owner")
+    list_display = ("status", "name", "description", "date", "algorithm")
     inlines = (ImageAdmin, )
