@@ -1,0 +1,6 @@
+roboflow
+inference-sdk
+inference
+rich
+boto3>=1.26.103,<2.0.0
+openmim~=0.3.9

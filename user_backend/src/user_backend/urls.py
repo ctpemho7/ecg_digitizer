@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from rest_framework import routers
 
 from user_backend import settings
-from ecgs.views import get_predict, EcgListView
+from ecgs.views import get_predict, EcgListView, EcgCreateView
 from users.views import UserViewSet, PatientToDocktorViewSet, PatientToDocktorListViewSet
 
 router = routers.DefaultRouter()
@@ -30,7 +30,7 @@ router.register(r"doctors/(?P<doctor_pk>\d+)/users", PatientToDocktorViewSet)
 
 
 urlpatterns = [
-    path('', EcgListView.as_view(), name='index'),
+    path('', include('ecgs.urls', namespace='ecgs')),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls))
 ]

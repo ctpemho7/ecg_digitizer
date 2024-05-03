@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  ml-backend:
+    container_name: ml-backend
+    image: humansignal/ml-backend:v0
+    build:
+      context: .
+      args:
+        TEST_ENV: ${TEST_ENV:-False}
+    environment:
+      # specify these parameters if you want to use basic auth for the model server
+      #- BASIC_AUTH_USER=
+      #- BASIC_AUTH_PASS=
+      # set the log level for the model server
+      - LOG_LEVEL=DEBUG
+      # any other parameters that you want to pass to the model server
+      - ANY=PARAMETER
+      # specify the number of workers and threads for the model server
+      - WORKERS=1
+      - THREADS=8
+      # specify the model directory (likely you don't need to change this)
+      - MODEL_DIR=/data/models
+
+      # Specify the Label Studio URL and API key to access
+      # uploaded, local storage and cloud storage files.
+      # Do not use 'localhost' as it does not work within Docker containers.
+      # Use prefix 'http://' or 'https://' for the URL always.
+      # Determine the actual IP using 'ifconfig' (Linux/Mac) or 'ipconfig' (Windows).
+      - LABEL_STUDIO_URL=http://label-studio
+      - LABEL_STUDIO_API_KEY=b71a0320d489ffead75974b76cb8a95053c49a48
+      # for s3 storage you can specify AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY,
+      # it will work faster than using intermediate LS API for your file URL resolving from s3
+      - AWS_ACCESS_KEY_ID=eU6g3yvpyDofMq7DQm4Z
+      - AWS_SECRET_ACCESS_KEY=giwk0RLrvA9ENTh4OTYkPEI3lMdbyW8vTp3m3dTI
+    ports:
+      - "9090:9090"
+    volumes:
+      - "./data/server:/data"
+    networks:
+        - ecg_network
+
+
+networks:
+    ecg_network:
+        driver: bridge

@@ -1,7 +1,0 @@
-fastapi[all]
-pydantic
-pydantic-settings
-roboflow
-inference-sdk
-inference
-rich
