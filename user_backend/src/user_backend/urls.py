@@ -20,7 +20,6 @@ from django.conf.urls.static import static
 from rest_framework import routers
 
 from user_backend import settings
-from ecgs.views import get_predict, EcgListView, EcgCreateView
 from users.views import UserViewSet, PatientToDocktorViewSet, PatientToDocktorListViewSet
 
 router = routers.DefaultRouter()

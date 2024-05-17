@@ -14,7 +14,7 @@
 
                 <h1 class="my-4">Список ЭКГ</h1>
                 <a type="button" class="btn btn-outline-success"
-                   href="{ url 'ecg:basket_add' ecg.id %}">
+                   href="{% url 'ecgs:ecg_create' %}">
                     Добавить ЭКГ
                 </a>
 
@@ -40,7 +40,7 @@
                                 <div class="card-footer text-center">
                                     <a type="button" class="btn btn-outline-success"
                                        href="{ url 'ecg:basket_add' ecg.id %}">
-                                        Отправить в корзину
+                                        Разметить
                                     </a>
                                 </div>
                             </div>
@@ -66,7 +66,7 @@
                                 </a>
                             </li>
                         {% endfor %}
-                    
+
                         <li class="page-item" {% if not page_obj.has_next %} disabled {% endif %}>
                             <a class="page-link"
                                href="{% if page_obj.has_next %} {% url 'ecgs:paginator' page_obj.next_page_number %} {% else %} # {% endif %}">

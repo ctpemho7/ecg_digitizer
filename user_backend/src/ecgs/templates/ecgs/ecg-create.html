@@ -1,0 +1,56 @@
+{% extends 'ecgs/base.html' %}
+
+{% block content %}
+    <section>
+        <div class="alert alert-warning text-center" role="alert">
+            Пожалуйста, заполните адрес электронной почты.
+        </div>
+        <div class="container">
+            <div class="py-5 text-center">
+                <h1>Оцифровать ЭКГ</h1>
+            </div>
+                <div class="col-md-7 col-lg-8">
+                    <h4 class="mb-3">Параметры ЭКГ</h4>
+                    <form action="{% url 'ecgs:ecg_create' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.name.id_for_label }}" class="form-label">Название</label>
+                                {{ form.name }}
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label">Описание </label>
+                                {{ form.description }}
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.date.id_for_label }}" class="form-label">Дата</label>
+                                {{ form.date }}
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.address.id_for_label }}" class="form-label">Амплитуда</label>
+                                {{ form.amplitude }}
+                            </div>
+
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.address.id_for_label }}" class="form-label">Скорость записи</label>
+                                {{ form.write_speed }}
+                            </div>
+                            <div class="col-12 mt-3">
+                                <label for="{{ form.images.id_for_label }}" class="form-label">Изображения</label>
+                                {{ form.images }}
+                            </div>
+
+                        </div>
+
+                        <hr class="my-4">
+
+                        <button class="w-100 btn btn-primary btn-lg" type="submit">Продолжить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
