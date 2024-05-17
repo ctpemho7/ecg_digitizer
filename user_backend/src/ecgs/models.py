@@ -36,3 +36,5 @@ class EcgModel(models.Model):
 class EcgImage(models.Model):
     ecg = models.ForeignKey(EcgModel, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to="images")
+    task_id = models.IntegerField(null=True, blank=True)
+    annotation_id = models.IntegerField(null=True, blank=True)
