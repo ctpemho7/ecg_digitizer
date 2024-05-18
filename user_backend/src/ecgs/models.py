@@ -1,6 +1,12 @@
+import httpx
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from users.models import UserModel
+
+from user_backend.settings import LABEL_STUDIO_TOKEN, LABEL_STUDIO_SYNC
+from ecgs.utils import HashedUploadTo
 
 
 class EcgModel(models.Model):
@@ -32,9 +38,36 @@ class EcgModel(models.Model):
         verbose_name = 'ЭКГ'
         verbose_name_plural = 'ЭКГ'
 
+    def get_buttons(self):
+        buttons = []
+        if self.status == self.CHOICES[0][0]:
+            images = self.images.all()
+            for i in range(len(images)):
+                buttons.append({
+                    'text': f'Разметить изображение {i+1}',
+                    'href': f'http://localhost:8080/projects/1/data?tab=1&task={images[i].task_id}'
+                })
+
+        if self.status == self.CHOICES[3][0]:
+            buttons.append({
+                'text': f'Оцифровать ЭКГ',
+                'href': f'smth'
+            })
+
+        return buttons
+
 
 class EcgImage(models.Model):
     ecg = models.ForeignKey(EcgModel, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="images")
+    image = models.ImageField(upload_to=HashedUploadTo('images/'))
     task_id = models.IntegerField(null=True, blank=True)
     annotation_id = models.IntegerField(null=True, blank=True)
+
+
+@receiver(post_save, sender=EcgModel, dispatch_uid="sync")
+def sync_storage(sender, instance, **kwargs):
+    url = LABEL_STUDIO_SYNC
+    headers = {"Authorization": f"Token {LABEL_STUDIO_TOKEN}"}
+    response = httpx.post(url, headers=headers)
+    # print(response.json())
+    print('Task synced successfully!')

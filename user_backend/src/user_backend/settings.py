@@ -151,13 +151,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.UserModel"
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-        # 'rest_framework.renderers.BrowsableAPIRenderer',
-    ],
-
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.AllowAny',
-    # ]
-}
+# Label Studio
+LABEL_STUDIO_TOKEN = os.getenv('LABEL_STUDIO_TOKEN')
+LABEL_STUDIO_SYNC = os.getenv('LABEL_STUDIO_SYNC')
