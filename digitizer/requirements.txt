@@ -1,0 +1,7 @@
+fastapi[all]
+pydantic
+pydantic-settings
+boto3
+numpy
+opencv-python
+scipy

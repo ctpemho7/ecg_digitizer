@@ -1,6 +1,7 @@
 version: "3.9"
 
 services:
+    # Backend Django для загрузки ЭКГ
     user_backend:
         build: user_backend
         image: user_backend
@@ -25,6 +26,51 @@ services:
         networks:
             - ecg_network
 
+    # Сервис оцифровки ЭКГ
+    digitizer:
+        build: digitizer
+        container_name: digitizer
+        command: uvicorn main:app --reload --host 0.0.0.0 --port=8010
+        ports:
+            - "8010:8010"
+        volumes:
+            - ./digitizer/src:/src
+        env_file:
+            - ./digitizer/src/.env
+        networks:
+            - ecg_network
+
+    # Redis брокер сообщений для Celery
+    redis:
+        image: redis:7-alpine
+        environment:
+          - REDIS_HOST=${REDIS_HOST:-redis}
+          - REDIS_PORT=${REDIS_PORT:-6379}
+          - ALLOW_EMPTY_PASSWORD=yes
+        ports:
+          - "6379:6379"
+        restart: on-failure
+        networks:
+          - ecg_network
+
+    # сервис распределенной очереди задач Celery
+    user-backend-celery:
+        build: user_backend
+        command: celery -A user_backend worker --loglevel=info
+        volumes:
+          - ./user_backend/src:/src
+        env_file:
+          - ./user_backend/.env
+        depends_on:
+          redis:
+            condition: service_started
+          db:
+            condition: service_healthy
+        restart: on-failure
+        networks:
+          - ecg_network
+
+    # ML backend для автоматического распознавания отведений
     ml-backend:
         container_name: ml-backend
         image: humansignal/ml-backend:v0
@@ -66,6 +112,7 @@ services:
         networks:
             - ecg_network
 
+    # Label Studio для разметки ЭКГ
     label-studio:
         image: heartexlabs/label-studio:latest
         ports:
@@ -73,7 +120,7 @@ services:
         volumes:
             - label_sudio_data:/label-studio/data
 
-
+    # PostgreSQL для хранения информации об ЭКГ
     db:
         image: postgres:14-alpine
         environment:
@@ -94,7 +141,7 @@ services:
         networks:
             - ecg_network
 
-
+    # S3 хранилище для хранения изображений и оцифрованных ЭКГ
     minio:
         image: minio/minio:latest
         ports:
@@ -109,6 +156,7 @@ services:
         networks:
             - ecg_network
 
+    # создание бакетов в S3 хранилище
     createbucket:
         image: minio/mc:latest
         depends_on:
@@ -117,7 +165,9 @@ services:
           /bin/sh -c "
           /usr/bin/mc config host add --api s3v4 s3 http://minio:9000 user password;
           /usr/bin/mc mb s3/static/;
+          /usr/bin/mc mb s3/media/;
           /usr/bin/mc policy set none  s3/static;
+          /usr/bin/mc policy set none  s3/media;
           "
         networks:
             - ecg_network

@@ -154,3 +154,14 @@ AUTH_USER_MODEL = "users.UserModel"
 # Label Studio
 LABEL_STUDIO_TOKEN = os.getenv('LABEL_STUDIO_TOKEN')
 LABEL_STUDIO_SYNC = os.getenv('LABEL_STUDIO_SYNC')
+
+# настройки кэширования
+REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_PORT = os.getenv('REDIS_PORT')
+BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/"
+
+# Celery
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+CELERY_TIMEZONE = TIME_ZONE
+

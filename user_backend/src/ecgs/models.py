@@ -2,6 +2,7 @@ import httpx
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 from users.models import UserModel
 
@@ -51,7 +52,7 @@ class EcgModel(models.Model):
         if self.status == self.CHOICES[3][0]:
             buttons.append({
                 'text': f'Оцифровать ЭКГ',
-                'href': f'smth'
+                'href': reverse("ecgs:digitize_ecg",  args=[self.id])
             })
 
         return buttons

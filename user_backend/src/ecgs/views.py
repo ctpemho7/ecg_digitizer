@@ -1,12 +1,13 @@
 import json
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView
 
 from ecgs.forms import EcgForm
 from ecgs.models import EcgModel, EcgImage
+from ecgs.tasks import digitize_task
 from users.models import UserModel
 
 
@@ -82,3 +83,8 @@ def task_annotated(request) -> JsonResponse:
         ecg_image.ecg.status = EcgModel.CHOICES[3][0]
         ecg_image.ecg.save()
     return JsonResponse({}, status=201)
+
+
+def digitize_ecg(request, ecg_id):
+    digitize_task.delay(ecg_id)
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
