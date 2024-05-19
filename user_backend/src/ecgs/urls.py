@@ -1,6 +1,6 @@
 from django.urls import path
 
-from ecgs.views import EcgListView, EcgCreateView, task_created, task_annotated, digitize_ecg
+from ecgs.views import EcgListView, EcgCreateView, task_created, task_annotated, digitize_ecg, download_ecg
 
 app_name = 'ecgs'
 
@@ -10,4 +10,5 @@ urlpatterns = [
     path('webhook/task_created', task_created, name='task_created'),
     path('webhook/task_annotated', task_annotated, name='task_annotated'),
     path('webhook/digitize_ecg/<int:ecg_id>', digitize_ecg, name='digitize_ecg'),
+    path('webhook/download_ecg/<int:ecg_id>', download_ecg, name='download_ecg'),
 ]

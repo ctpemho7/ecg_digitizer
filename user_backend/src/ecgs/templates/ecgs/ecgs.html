@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="card-footer text-center">
                                     {% for image in ecg.get_buttons %}
-                                        <a type="button" class="btn btn-outline-success mb-2" href="{{ image.href }}">
+                                        <a type="button" class="btn btn-outline-success mb-2 {{ image.args }}" href="{{ image.href }}">
                                             {{ image.text }}
                                         </a>
                                     {% endfor %}

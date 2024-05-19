@@ -41,20 +41,32 @@ class EcgModel(models.Model):
 
     def get_buttons(self):
         buttons = []
-        if self.status == self.CHOICES[0][0]:
+        if self.status == self.CHOICES[0][0]:  # Создано - на разметку
             images = self.images.all()
             for i in range(len(images)):
                 buttons.append({
                     'text': f'Разметить изображение {i+1}',
-                    'href': f'http://localhost:8080/projects/1/data?tab=1&task={images[i].task_id}'
+                    'href': f'http://localhost:8080/projects/1/data?tab=1&task={images[i].task_id}',
                 })
 
-        if self.status == self.CHOICES[3][0]:
+        if self.status == self.CHOICES[3][0]:  # Размечено - оцифровать
             buttons.append({
                 'text': f'Оцифровать ЭКГ',
-                'href': reverse("ecgs:digitize_ecg",  args=[self.id])
+                'href': reverse("ecgs:digitize_ecg",  args=[self.id]),
             })
 
+        if self.status == self.CHOICES[4][0]:  # На оцифровке - ждать
+            buttons.append({
+                'text': f'На оцифровке',
+                'href': '#',
+                'args': 'disabled',
+            })
+
+        if self.status == self.CHOICES[5][0]:  # Оцифровано - оцифровать
+            buttons.append({
+                'text': f'Скачать',
+                'href': reverse("ecgs:download_ecg",  args=[self.id]),
+            })
         return buttons
 
 

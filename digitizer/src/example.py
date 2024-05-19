@@ -8,6 +8,7 @@ from ecgdigitize.image import openImage
 from model.InputParameters import InputParameters
 from model.Lead import Lead, LeadId
 
+
 def show_img(img):
     window_name = 'photo'
     cv2.imshow(window_name, img)

@@ -1,6 +1,8 @@
+import io
 import json
+from zipfile import ZipFile
 
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView
@@ -8,6 +10,7 @@ from django.views.generic import ListView, CreateView
 from ecgs.forms import EcgForm
 from ecgs.models import EcgModel, EcgImage
 from ecgs.tasks import digitize_task
+from ecgs.utils import get_from_s3
 from users.models import UserModel
 
 
@@ -15,6 +18,7 @@ class EcgListView(ListView):
     model = EcgModel
     template_name = 'ecgs/ecgs.html'
     paginate_by = 50
+    ordering = ['-id']
 
 
 class EcgCreateView(CreateView):
@@ -32,6 +36,8 @@ class EcgCreateView(CreateView):
         # print(self.request)
         # print(self.request.FILES)
         for image in self.request.FILES.getlist('images'):
+            # deskew image
+
             EcgImage.objects.create(ecg=ecg_instance, image=image)
         return super().form_valid(form)
 
@@ -88,3 +94,24 @@ def task_annotated(request) -> JsonResponse:
 def digitize_ecg(request, ecg_id):
     digitize_task.delay(ecg_id)
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+
+def download_ecg(request, ecg_id):
+    ecg = EcgModel.objects.get(id=6)
+    header = get_from_s3(ecg.header_path.name)
+    signal = get_from_s3(ecg.signal_path.name)
+
+    byte_stream = io.BytesIO()
+    zf = ZipFile(byte_stream, "w")
+
+    zip_name = f'wfdb-{ecg_id}.zip'
+
+    # zf.write(header, header.split('/')[-1])
+    # zf.write(signal, signal.split('/')[-1])
+    zf.write(signal, f'{ecg.name}.dat')
+    zf.write(header, f'{ecg.name}.hea')
+    zf.close()
+
+    response = HttpResponse(byte_stream.getvalue(), content_type='application/x-zip-compressed')
+    response['Content-Disposition'] = 'attachment; filename="%s"' % zip_name
+    return response

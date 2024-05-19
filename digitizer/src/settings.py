@@ -33,6 +33,10 @@ class Settings(BaseSettings):
     #: ключи для S3
     AWS_ACCESS_KEY_ID: str = Field(default=os.getenv("AWS_ACCESS_KEY_ID"))
     AWS_SECRET_ACCESS_KEY: str = Field(default=os.getenv("AWS_ACCESS_KEY_ID"))
+    #: бакет с изображениями
+    AWS_INPUT_BUCKET: str = Field(default=os.getenv("AWS_INPUT_BUCKET"))
+    #: бакет с разметкой
+    AWS_OUTPUT_BUCKET: str = Field(default=os.getenv("AWS_OUTPUT_BUCKET"))
 
     class Config:
         env_file = ".env"

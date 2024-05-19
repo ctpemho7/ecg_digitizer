@@ -10,6 +10,8 @@ def digitize_task(ecg_id):
     print('digitizing for', ecg_id)
 
     ecg = EcgModel.objects.get(id=ecg_id)
+    ecg.status = EcgModel.CHOICES[4][0]
+    ecg.save()
     url = 'http://host.docker.internal:8010/digitize'
     body = EcgParams(
         images={
@@ -23,3 +25,6 @@ def digitize_task(ecg_id):
     response = httpx.post(url, json=body.dict(), timeout=15.0)
     response_data = response.json()
     print(response_data)
+    if response_data:
+        ecg.status = EcgModel.CHOICES[5][0]
+        ecg.save()

@@ -20,5 +20,5 @@ def hello_world(params: EcgParams):
     print(params.write_speed)
     import time
     time.sleep(10)
-    data = {"message": "Hello METANIT.COM"}
-    return JSONResponse(content=data, status_code=200)
+    data = {"message": "ECG DIGITIZED"}
+    return JSONResponse(content=data, status_code=201)
