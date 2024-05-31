@@ -10,7 +10,7 @@ from django.views.generic import ListView, CreateView
 from ecgs.forms import EcgForm
 from ecgs.models import EcgModel, EcgImage
 from ecgs.tasks import digitize_task
-from ecgs.utils import get_from_s3
+from ecgs.utils import get_from_s3, deskew_image
 from users.models import UserModel
 
 
@@ -37,8 +37,8 @@ class EcgCreateView(CreateView):
         # print(self.request.FILES)
         for image in self.request.FILES.getlist('images'):
             # deskew image
-
-            EcgImage.objects.create(ecg=ecg_instance, image=image)
+            rotated = deskew_image(image)
+            EcgImage.objects.create(ecg=ecg_instance, image=rotated)
         return super().form_valid(form)
 
 
@@ -97,9 +97,13 @@ def digitize_ecg(request, ecg_id):
 
 
 def download_ecg(request, ecg_id):
-    ecg = EcgModel.objects.get(id=6)
-    header = get_from_s3(ecg.header_path.name)
-    signal = get_from_s3(ecg.signal_path.name)
+    ecg = EcgModel.objects.get(id=ecg_id)
+    # header = get_from_s3(ecg.header_path.name)
+    # signal = get_from_s3(ecg.signal_path.name)
+    mock_signal = 'digitized/00001_lr.dat'
+    mock_header = 'digitized/00001_lr.hea'
+    header = get_from_s3(mock_header)
+    signal = get_from_s3(mock_signal)
 
     byte_stream = io.BytesIO()
     zf = ZipFile(byte_stream, "w")

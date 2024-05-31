@@ -62,7 +62,7 @@ class EcgModel(models.Model):
                 'args': 'disabled',
             })
 
-        if self.status == self.CHOICES[5][0]:  # Оцифровано - оцифровать
+        if self.status == self.CHOICES[5][0]:  # Оцифровано - скачать
             buttons.append({
                 'text': f'Скачать',
                 'href': reverse("ecgs:download_ecg",  args=[self.id]),

@@ -39,7 +39,10 @@
                                 </div>
                                 <div class="card-footer text-center">
                                     {% for image in ecg.get_buttons %}
-                                        <a type="button" class="btn btn-outline-success mb-2 {{ image.args }}" href="{{ image.href }}">
+                                        <a id="{{ image.id }}" type="button"
+                                           class="btn btn-outline-success mb-2 {{ image.args }}"
+                                           href="{{ image.href }}"
+                                        >
                                             {{ image.text }}
                                         </a>
                                     {% endfor %}
@@ -55,6 +58,18 @@
         </div>
 
     </div>
+    <script>
+        function confirmAndOpen(url) {
+            alert("Вы будете перенаправлены на другую страницу для подтверждения разметки. " +
+                "После валидации разметки нажмите Submit и вернитесь на эту страницу")
+            window.open(url)
+        }
+        document.getElementById('').addEventListener('click', function () {
+            alert("Вы будете перенаправлены на другую страницу для подтверждения разметки. " +
+                "После валидации разметки нажмите Submit и вернитесь на эту страницу")
+            window.open(this.getAttribute("url"))
+        })
+    </script>
 {% endblock %}
 
 {% block footer %}
