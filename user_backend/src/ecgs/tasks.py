@@ -14,6 +14,7 @@ def digitize_task(ecg_id):
     ecg.save()
     url = 'http://host.docker.internal:8010/digitize'
     body = EcgParams(
+        id=ecg_id,
         images={
             str(image.image): str(image.annotation_id)
             for image in ecg.images.all()
@@ -22,9 +23,11 @@ def digitize_task(ecg_id):
         write_speed=ecg.write_speed,
     )
 
-    response = httpx.post(url, json=body.dict(), timeout=15.0)
+    response = httpx.post(url, json=body.dict(), timeout=20.0)
     response_data = response.json()
     print(response_data)
     if response_data:
         ecg.status = EcgModel.CHOICES[5][0]
+        ecg.header_path.name = response_data['result']['header']
+        ecg.signal_path.name = response_data['result']['signal']
         ecg.save()

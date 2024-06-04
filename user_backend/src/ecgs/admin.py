@@ -1,4 +1,5 @@
 import io
+import os
 from zipfile import ZipFile
 
 from django.contrib import admin
@@ -15,12 +16,12 @@ def download_ecg(modeladmin, request, queryset):
     zip_name = f'wfdb-collection.zip'
 
     for ecg in queryset:
-        mock_signal = 'digitized/00001_lr.dat'
-        mock_header = 'digitized/00001_lr.hea'
-        header = get_from_s3(mock_header)
-        signal = get_from_s3(mock_signal)
-        zf.write(signal, f'{ecg.name}.dat')
-        zf.write(header, f'{ecg.name}.hea')
+        header = get_from_s3(ecg.header_path.name)
+        signal = get_from_s3(ecg.signal_path.name)
+        header = get_from_s3(header)
+        signal = get_from_s3(signal)
+        zf.write(signal, os.path.basename(signal))
+        zf.write(header, os.path.basename(header))
 
     zf.close()
 
@@ -31,7 +32,8 @@ def download_ecg(modeladmin, request, queryset):
 
 class ImageAdmin(admin.TabularInline):
     model = EcgImage
-    fields = ('id', 'image')
+    fields = ('id', 'image', 'task_id', 'annotation_id')
+    readonly_fields = ['task_id', 'annotation_id']
 
 
 @admin.register(EcgModel)

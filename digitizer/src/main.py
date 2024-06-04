@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Body
 from fastapi.responses import JSONResponse
 
+from digitization import digitize_ecg
 from settings import settings
 from schemas import EcgParams
 
@@ -14,11 +15,17 @@ app = FastAPI(**app_params)
 
 
 @app.post("/digitize")
-def hello_world(params: EcgParams):
+def digitizing(params: EcgParams):
+    print("Запрос на оцифровку")
     from pprint import pprint
     pprint(params.dict())
-    print(params.write_speed)
-    import time
-    time.sleep(10)
-    data = {"message": "ECG DIGITIZED"}
+    header, signal = digitize_ecg(params)
+    data = {
+        "message": "ECG DIGITIZED",
+        "result": {
+            "header": header,
+            "signal": signal
+        },
+    }
+
     return JSONResponse(content=data, status_code=201)

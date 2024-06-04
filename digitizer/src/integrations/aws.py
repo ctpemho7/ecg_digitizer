@@ -27,6 +27,17 @@ def get_from_s3(key, bucket) -> str:
     return filename
 
 
+def save_ecg_to_s3(name, header_file_path, signal_file_path):
+    save_dir = 'digitized_signals'
+    header_in_s3 = f"{save_dir}/wfdb_{name}.hea"
+    signal_in_s3 = f"{save_dir}/wfdb_{name}.dat"
 
-def save_ecg_to_s3(header_file_path, signal_file_path):
-    client.upload_file()
+    client.upload_file(header_file_path,
+                       settings.AWS_INPUT_BUCKET,
+                       header_in_s3)
+
+    client.upload_file(signal_file_path,
+                       settings.AWS_INPUT_BUCKET,
+                       signal_in_s3)
+
+    return header_in_s3, signal_in_s3

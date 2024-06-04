@@ -1,5 +1,6 @@
 import io
 import json
+import os
 from zipfile import ZipFile
 
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
@@ -98,22 +99,18 @@ def digitize_ecg(request, ecg_id):
 
 def download_ecg(request, ecg_id):
     ecg = EcgModel.objects.get(id=ecg_id)
-    # header = get_from_s3(ecg.header_path.name)
-    # signal = get_from_s3(ecg.signal_path.name)
-    mock_signal = 'digitized/00001_lr.dat'
-    mock_header = 'digitized/00001_lr.hea'
-    header = get_from_s3(mock_header)
-    signal = get_from_s3(mock_signal)
+    header = get_from_s3(ecg.header_path.name)
+    signal = get_from_s3(ecg.signal_path.name)
+    header = get_from_s3(header)
+    signal = get_from_s3(signal)
 
     byte_stream = io.BytesIO()
     zf = ZipFile(byte_stream, "w")
 
     zip_name = f'wfdb-{ecg_id}.zip'
 
-    # zf.write(header, header.split('/')[-1])
-    # zf.write(signal, signal.split('/')[-1])
-    zf.write(signal, f'{ecg.name}.dat')
-    zf.write(header, f'{ecg.name}.hea')
+    zf.write(signal, os.path.basename(signal))
+    zf.write(header, os.path.basename(header))
     zf.close()
 
     response = HttpResponse(byte_stream.getvalue(), content_type='application/x-zip-compressed')
