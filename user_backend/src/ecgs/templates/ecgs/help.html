@@ -1,0 +1,47 @@
+{% extends 'ecgs/base.html' %}
+{% load static %}
+
+{% block css %}
+<link href="{% static 'vendor/css/products.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block content %}
+<div class="wrapper d-flex flex-column">
+    <div class="container content mb-5">
+        <div class="row">
+            <div class="col-lg-3">
+                <h1 class="my-3">Список ЭКГ</h1>
+                <a href="{% url 'ecgs:help' %}">
+                    <h3 class="my-4">Помощь</h3>
+                </a>
+                <a type="button" class="btn btn-outline-success" href="{% url 'ecgs:ecg_create' %}">
+                    Добавить ЭКГ
+                </a>
+            </div>
+            <div class="col-lg-9">
+                <h1 class="my-3">Справка</h1>
+                <ol class="mb-3">
+                    <li>Нажмите на кнопку "Добавить ЭКГ"</li>
+                    <li>Введите параметры ЭКГ, прикрепив несколько изображений</li>
+                    <li>После поочередно нажмите на кнопки "Разметить снимок", чтобы перейти в систему разметки</li>
+                    <li>Модель автоматической детекции определит положение отведений, провалидируйте её качество и исправьте ошибки</li>
+                    <li>Нажмите "Submit" и вернитесь на главную страницу</li>
+                    <li>Нажмите кнопку "Оцифровать"</li>
+                    <li>Подождите, а затем можно нажать "Скачать"</li>
+                </ol>
+                <p class="mb-4">На ЭКГ указаны параметры: скорость записи (мм/с) и амплитуда (мм/мВ). При разметке ЭКГ над каждым отведением указаны их названия. В интерфейсе Label Studio можно изменить положение отведений, если это необходимо.</p>
+                <img class="d-block img-fluid mb-4" src="{% static 'vendor/img/ecg.png' %}" alt="ecg">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="py-5 bg-dark mt-auto">
+    <div class="container">
+        <p class="m-0 text-center text-white">ECG Digitizer 2024</p>
+    </div>
+</footer>
+{% endblock %}

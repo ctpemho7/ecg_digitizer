@@ -25,6 +25,31 @@ class MultipleFileField(forms.FileField):
 class EcgForm(forms.ModelForm):
     class Meta:
         model = EcgModel
-        fields = ('name', 'description', 'amplitude', 'write_speed', 'date', 'algorithm', 'images')
+        fields = ('name', 'description', 'amplitude', 'write_speed', 'date', 'images')
 
-    images = MultipleFileField(label='Изображения',)
+    name = forms.CharField(widget=forms.TextInput(attrs={
+        'class': "form-control py-4",
+        'placeholder': 'Введите название',
+    }))
+    description = forms.CharField(widget=forms.TextInput(attrs={
+        'class': "form-control py-4",
+        'placeholder': 'Введите описание',
+    }))
+    amplitude = forms.IntegerField(widget=forms.TextInput(attrs={
+        'class': "form-control py-4",
+        'placeholder': 'Введите скорость записи',
+    }),
+        max_value=100,
+        min_value=0)
+    write_speed = forms.IntegerField(widget=forms.TextInput(attrs={
+        'class': "form-control py-4",
+        'placeholder': 'Введите скорость записи',
+    }),
+        max_value=100,
+        min_value=0)
+    date = forms.DateField(widget=forms.TextInput(attrs={
+        'class': "form-control py-4",
+        'placeholder': 'Введите дату',
+    }))
+
+    images = MultipleFileField(label='Изображения', )

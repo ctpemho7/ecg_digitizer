@@ -10,6 +10,13 @@ ENV ENV=${ENV} \
   # Disable pip version check
   PIP_DISABLE_PIP_VERSION_CHECK=1
 
+RUN apt-get update &&  \
+    apt-get install -y graphviz graphviz-dev && apt-get install -y \
+    build-essential \
+    # Cleaning cache:
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+    && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
 COPY ./requirements.txt /
 
 RUN --mount=type=cache,target=/root/.cache/pip \
@@ -17,7 +24,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 ADD ./src /src
 ADD ./media /media
-ADD ./static /static
+ADD src/static /static
 
 WORKDIR /src
 

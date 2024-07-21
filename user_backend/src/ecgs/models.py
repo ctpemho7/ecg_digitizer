@@ -45,7 +45,7 @@ class EcgModel(models.Model):
             images = self.images.all()
             for i in range(len(images)):
                 buttons.append({
-                    'text': f'Разметить изображение {i+1}',
+                    'text': f'Разметить снимок {i+1}',
                     'href': f'http://localhost:8080/projects/1/data?tab=1&task={images[i].task_id}',
                 })
 

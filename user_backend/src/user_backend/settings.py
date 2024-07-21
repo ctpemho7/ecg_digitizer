@@ -30,7 +30,8 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
 
-
+LOGIN_REDIRECT_URL = "ecgs:index"
+LOGOUT_REDIRECT_URL = "users:login"
 # Application definition
 
 INSTALLED_APPS = [

@@ -40,5 +40,5 @@ class ImageAdmin(admin.TabularInline):
 class EcgModelAdmin(admin.ModelAdmin):
     list_display = ("name", "status",  "description", "date", "algorithm")
     inlines = (ImageAdmin, )
-    list_filter = ["date", "algorithm", "status", ]
+    list_filter = ["date", "algorithm", "status", "owner"]
     actions = [download_ecg]

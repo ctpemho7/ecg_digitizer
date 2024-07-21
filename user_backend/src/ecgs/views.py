@@ -6,7 +6,7 @@ from zipfile import ZipFile
 from django.http import JsonResponse, HttpResponseRedirect, HttpResponse, FileResponse
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, TemplateView
 
 from ecgs.forms import EcgForm
 from ecgs.models import EcgModel, EcgImage
@@ -21,6 +21,10 @@ class EcgListView(ListView):
     paginate_by = 50
     ordering = ['-id']
 
+    def get_queryset(self):
+        queryset = EcgModel.objects.filter(owner=self.request.user if self.request.user.id else UserModel.objects.get(id=1)).order_by('-id')
+        return queryset
+
 
 class EcgCreateView(CreateView):
     model = EcgModel
@@ -30,7 +34,7 @@ class EcgCreateView(CreateView):
 
     def form_valid(self, form):
         ecg_instance = form.instance
-        ecg_instance.owner = UserModel.objects.get(id=1)
+        ecg_instance.owner = self.request.user if self.request.user.id else UserModel.objects.get(id=1)
         ecg_instance.algorithm = "Fortune"
         ecg_instance.status = EcgModel.CHOICES[0][0]
         ecg_instance.save()
@@ -116,3 +120,7 @@ def download_ecg(request, ecg_id):
     response = HttpResponse(byte_stream.getvalue(), content_type='application/x-zip-compressed')
     response['Content-Disposition'] = 'attachment; filename="%s"' % zip_name
     return response
+
+
+class HelpPageView(TemplateView):
+    template_name = "ecgs/help.html"
