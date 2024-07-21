@@ -70,7 +70,7 @@ services:
         networks:
           - ecg_network
 
-    # ML backend для автоматического распознавания отведений
+    # ML backend для автоматического распознавания отведений - Roboflow
     ml-backend:
         container_name: ml-backend
         image: humansignal/ml-backend:v0
@@ -111,6 +111,45 @@ services:
           - "./data/server:/data"
         networks:
             - ecg_network
+
+    # ML backend для автоматического распознавания отведений - YOLO
+    ml-backend-yolo:
+        container_name: ml-backend-yolo
+        image: humansignal/ml-backend:v0
+        build:
+          context: yolo_detector
+          args:
+            TEST_ENV: ${TEST_ENV:-False}
+        environment:
+          # specify these parameters if you want to use basic auth for the model server
+          #- BASIC_AUTH_USER=
+          #- BASIC_AUTH_PASS=
+          # set the log level for the model server
+          - LOG_LEVEL=DEBUG
+          # specify the number of workers and threads for the model server
+          - WORKERS=1
+          - THREADS=8
+          # specify the model directory (likely you don't need to change this)
+          - MODEL_DIR=/data/models
+
+          # Specify the Label Studio URL and API key to access
+          # uploaded, local storage and cloud storage files.
+          # Do not use 'localhost' as it does not work within Docker containers.
+          # Use prefix 'http://' or 'https://' for the URL always.
+          # Determine the actual IP using 'ifconfig' (Linux/Mac) or 'ipconfig' (Windows).
+          - LABEL_STUDIO_URL=http://label-studio
+          - LABEL_STUDIO_API_KEY=
+          # for s3 storage you can specify AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY,
+          # it will work faster than using intermediate LS API for your file URL resolving from s3
+          - AWS_ACCESS_KEY_ID=
+          - AWS_SECRET_ACCESS_KEY=
+        ports:
+          - "9091:9091"
+        volumes:
+          - "./data/server2:/data"
+        networks:
+            - ecg_network
+
 
     # Label Studio для разметки ЭКГ
     label-studio:
